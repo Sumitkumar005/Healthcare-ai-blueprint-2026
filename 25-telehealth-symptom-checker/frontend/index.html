@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telehealth Pre-Visit Symptom Checker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: #5568d3;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .question-container {
+            background: #f8f9fa;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .red-flag-alert {
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c33;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .hpi-summary {
+            background: #f0f7ff;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Telehealth Pre-Visit Symptom Checker</h1>
+        <p class="subtitle">Please complete this questionnaire before your appointment</p>
+        
+        <!-- Initial Form -->
+        <div id="startForm">
+            <div class="form-group">
+                <label for="patientId">Patient ID</label>
+                <input type="text" id="patientId" placeholder="Enter your patient ID" required>
+            </div>
+            <div class="form-group">
+                <label for="appointmentId">Appointment ID</label>
+                <input type="text" id="appointmentId" placeholder="Enter your appointment ID" required>
+            </div>
+            <div class="form-group">
+                <label for="chiefComplaint">Chief Complaint</label>
+                <input type="text" id="chiefComplaint" placeholder="e.g., Chest pain, Headache, etc." required>
+            </div>
+            <button class="btn" onclick="startQuestionnaire()">Start Questionnaire</button>
+        </div>
+        
+        <!-- Questionnaire Section -->
+        <div id="questionnaireSection" class="hidden">
+            <div class="question-container">
+                <div class="question-text" id="questionText"></div>
+                <textarea id="answerInput" class="answer-input" placeholder="Type your answer here..."></textarea>
+                <button class="btn" onclick="submitAnswer()" style="margin-top: 12px;">Submit Answer</button>
+            </div>
+            
+            <div id="redFlagAlert" class="red-flag-alert hidden"></div>
+        </div>
+        
+        <!-- Summary Section -->
+        <div id="summarySection" class="hidden">
+            <h2>HPI Summary</h2>
+            <div class="hpi-summary" id="hpiSummary"></div>
+            <button class="btn" onclick="location.reload()">Start New Questionnaire</button>
+        </div>
+        
+        <div id="loading" class="loading hidden">Processing...</div>
+    </div>
+    
+    <script>
+        let currentSessionId = null;
+        let currentQuestionId = null;
+        
+        async function startQuestionnaire() {
+            const patientId = document.getElementById('patientId').value;
+            const appointmentId = document.getElementById('appointmentId').value;
+            const chiefComplaint = document.getElementById('chiefComplaint').value;
+            
+            if (!patientId || !appointmentId || !chiefComplaint) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            document.getElementById('startForm').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+            
+            try {
+                const response = await fetch('/api/questionnaire/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        patient_id: patientId,
+                        appointment_id: appointmentId,
+                        chief_complaint: chiefComplaint
+                    })
+                });
+                
+                const data = await response.json();
+                currentSessionId = data.session_id;
+                currentQuestionId = data.question_id;
+                
+                document.getElementById('questionText').textContent = data.current_question;
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('questionnaireSection').classList.remove('hidden');
+            } catch (error) {
+                alert('Error starting questionnaire: ' + error.message);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('startForm').classList.remove('hidden');
+            }
+        }
+        
+        async function submitAnswer() {
+            const answer = document.getElementById('answerInput').value;
+            
+            if (!answer.trim()) {
+                alert('Please provide an answer');
+                return;
+            }
+            
+            document.getElementById('loading').classList.remove('hidden');
+            
+            try {
+                const response = await fetch('/api/questionnaire/answer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        session_id: currentSessionId,
+                        question_id: currentQuestionId,
+                        answer: answer
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Show red flags if any
+                if (data.red_flags && data.red_flags.length > 0) {
+                    const alertDiv = document.getElementById('redFlagAlert');
+                    alertDiv.textContent = `⚠️ Red flags detected: ${data.red_flags.join(', ')}. Please inform your provider immediately.`;
+                    alertDiv.classList.remove('hidden');
+                }
+                
+                // Check if complete
+                if (data.is_complete) {
+                    // Get summary
+                    const summaryResponse = await fetch(`/api/questionnaire/summary/${currentSessionId}`);
+                    const summaryData = await summaryResponse.json();
+                    
+                    document.getElementById('questionnaireSection').classList.add('hidden');
+                    document.getElementById('hpiSummary').textContent = summaryData.hpi_summary;
+                    document.getElementById('summarySection').classList.remove('hidden');
+                } else {
+                    // Show next question
+                    currentQuestionId = data.question_id;
+                    document.getElementById('questionText').textContent = data.current_question;
+                    document.getElementById('answerInput').value = '';
+                }
+                
+                document.getElementById('loading').classList.add('hidden');
+            } catch (error) {
+                alert('Error submitting answer: ' + error.message);
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
