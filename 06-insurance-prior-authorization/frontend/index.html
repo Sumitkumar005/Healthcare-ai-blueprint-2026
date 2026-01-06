@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prior Authorization Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        #result.show {
+            display: block;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Prior Authorization Generator</h1>
+        <p class="subtitle">AI-powered prior authorization request generator</p>
+        
+        <form id="authForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patient_name">Patient Name *</label>
+                    <input type="text" id="patient_name" name="patient_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="patient_dob">Date of Birth (YYYY-MM-DD) *</label>
+                    <input type="text" id="patient_dob" name="patient_dob" placeholder="1980-01-01" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="diagnosis_code">Diagnosis Code (ICD-10) *</label>
+                    <input type="text" id="diagnosis_code" name="diagnosis_code" placeholder="E11.9" required>
+                </div>
+                <div class="form-group">
+                    <label for="diagnosis_description">Diagnosis Description *</label>
+                    <input type="text" id="diagnosis_description" name="diagnosis_description" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="treatment_code">Treatment Code (CPT) *</label>
+                    <input type="text" id="treatment_code" name="treatment_code" placeholder="97110" required>
+                </div>
+                <div class="form-group">
+                    <label for="treatment_description">Treatment Description *</label>
+                    <input type="text" id="treatment_description" name="treatment_description" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="clinical_notes">Clinical Notes/Rationale *</label>
+                <textarea id="clinical_notes" name="clinical_notes" required placeholder="Describe the clinical rationale for this treatment..."></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="provider_name">Provider Name</label>
+                    <input type="text" id="provider_name" name="provider_name">
+                </div>
+                <div class="form-group">
+                    <label for="insurance_name">Insurance Company</label>
+                    <input type="text" id="insurance_name" name="insurance_name">
+                </div>
+            </div>
+            
+            <button type="submit" id="submitBtn">Generate Prior Authorization</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+    
+    <script>
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Generating...';
+            resultDiv.innerHTML = '<div class="loading">⏳ Generating prior authorization request...</div>';
+            resultDiv.classList.add('show');
+            
+            try {
+                // Collect form data
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData);
+                
+                // Send request
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                // Display result
+                if (result.status === 'success') {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Prior Authorization Generated Successfully!</h3>
+                            <p><strong>Patient:</strong> ${data.patient_name}</p>
+                            <p><strong>Diagnosis:</strong> ${data.diagnosis_code} - ${data.diagnosis_description}</p>
+                            <p><strong>Treatment:</strong> ${data.treatment_code} - ${data.treatment_description}</p>
+                            <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+                            <h4>Medical Justification:</h4>
+                            <pre style="white-space: pre-wrap; background: white; padding: 15px; border-radius: 4px; margin-top: 10px;">${result.content.medical_justification}</pre>
+                            <p style="margin-top: 15px;"><em>Note: Full PDF can be downloaded from the backend.</em></p>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Error</h3>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 10px; font-size: 12px;">Make sure the backend server is running and API keys are configured.</p>
+                    </div>
+                `;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Generate Prior Authorization';
+            }
+        });
+    </script>
+</body>
+</html>
+
+

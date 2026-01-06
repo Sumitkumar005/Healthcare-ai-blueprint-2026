@@ -1,0 +1,2 @@
+"""Wound Photo Documentation Package"""
+

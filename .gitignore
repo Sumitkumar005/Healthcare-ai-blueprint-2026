@@ -1,0 +1,112 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Model files (keep README)
+models/*.pth
+models/*.h5
+models/*.pkl
+models/*.hdf5
+models/*.ckpt
+!models/README.md
+
+# Node modules (for React projects)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frontend builds
+dist/
+build/
+.next/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Audio/Video files (keep examples small)
+*.wav
+*.mp3
+*.mp4
+!examples/*.wav
+!examples/*.mp3
+
+# Images (keep examples)
+*.jpg
+*.jpeg
+*.png
+*.gif
+!examples/*.jpg
+!examples/*.jpeg
+!examples/*.png
+!examples/*.gif
+!demo.gif
+!demo.png
+
+# PDFs (keep examples)
+*.pdf
+!examples/*.pdf
+
+

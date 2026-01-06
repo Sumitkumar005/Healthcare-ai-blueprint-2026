@@ -1,0 +1,9 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-dotenv==1.0.0
+groq==0.4.1
+pytesseract==0.3.10
+Pillow==10.1.0
+requests==2.31.0
+pydantic==2.5.0
+
