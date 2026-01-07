@@ -320,6 +320,10 @@ If you find this repository useful, please ⭐ **star it**! This helps others di
 
 ---
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Sumitkumar005/Healthcare-ai-blueprint-2026&type=date&legend=top-left)](https://www.star-history.com/#Sumitkumar005/Healthcare-ai-blueprint-2026&type=date&legend=top-left)
+
 ## 📄 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
