@@ -314,15 +314,13 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 If you find this repository useful, please ⭐ **star it**! This helps others discover it and motivates continued development.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Sumitkumar005/Healthcare-ai-blueprint-2026&type=Date)](https://star-history.com/#Sumitkumar005/Healthcare-ai-blueprint-2026&Date)
+[![Star Chart](https://api.star-history.com/svg?repos=Sumitkumar005/Healthcare-ai-blueprint-2026&type=date&legend=top-left)](https://www.star-history.com/#Sumitkumar005/Healthcare-ai-blueprint-2026&type=date&legend=top-left)
 
 </div>
 
 ---
 
 ## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Sumitkumar005/Healthcare-ai-blueprint-2026&type=date&legend=top-left)](https://www.star-history.com/#Sumitkumar005/Healthcare-ai-blueprint-2026&type=date&legend=top-left)
 
 ## 📄 License
 
