@@ -2,7 +2,7 @@
 
 # 🏥 Healthcare AI Blueprint 2026
 
-**50 Production-Ready Healthcare AI Projects | From Voice Notes to Clinical Decision Support**
+**50 Production-Ready Healthcare AI Projects | From Voice Notes to Clinical Decision Support**/
 
 [![GitHub stars](https://img.shields.io/github/stars/Sumitkumar005/Healthcare-ai-blueprint-2026?style=for-the-badge&logo=github&color=yellow)](https://github.com/Sumitkumar005/Healthcare-ai-blueprint-2026/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/Sumitkumar005/Healthcare-ai-blueprint-2026?style=for-the-badge&logo=github&color=blue)](https://github.com/Sumitkumar005/Healthcare-ai-blueprint-2026/network/members)
